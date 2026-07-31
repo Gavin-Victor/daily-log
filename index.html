@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F6F3">
+<title>Daily Log</title>
+<style>
+  :root{
+    --bg:#F4F6F3; --card:#fff; --line:#e5e3de; --ink:#2b2a26; --mut:#8b8880;
+    --food:#5B7B5A; --move:#B5651D; --meds:#4A6FA5; --bath:#8B5A8C; --body:#6B6B4A; --sym:#A05252;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+  .wrap{max-width:520px;margin:0 auto;padding:0 14px 80px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:22px;margin:20px 0 2px}
+  .sub{font-size:12px;color:var(--mut);margin:0 0 14px}
+  .tabs{display:flex;gap:6px;margin-bottom:14px}
+  .tabs button{flex:1;padding:9px 0;font-size:14px;font-weight:600;border-radius:8px;
+    border:1px solid var(--line);background:#fff;color:var(--mut);cursor:pointer}
+  .tabs button.on{background:#2b2a26;color:#fff;border-color:#2b2a26}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:14px}
+  .accent{height:4px}
+  .chead{display:flex;align-items:center;gap:8px;padding:10px 14px 8px}
+  .chead h3{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#4d4b45}
+  .chead .n{margin-left:auto;font-size:11px;color:#b5b2aa;font-variant-numeric:tabular-nums}
+  .body{padding:2px 14px 14px}
+  .row{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid #f1efeb;font-size:14px}
+  .row .t{font-size:11px;color:#b5b2aa;width:44px;flex:none;font-variant-numeric:tabular-nums}
+  .row .m{flex:1;min-width:0}
+  .row .m .p{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .m .s{font-size:11px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .x{background:none;border:0;color:#d6d3cc;font-size:16px;cursor:pointer;padding:2px 4px}
+  .row .x:active{color:#c0392b}
+  .addbtn{width:100%;text-align:left;background:none;border:0;border-top:1px solid #f1efeb;
+    padding:10px 14px;font-size:14px;color:#b5b2aa;cursor:pointer}
+  .form{padding:12px 14px;border-top:1px solid #f1efeb;background:#faf9f7}
+  .form>*+*{margin-top:8px}
+  .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  label.f{display:block;font-size:11px;color:var(--mut);margin-bottom:3px}
+  input,select,textarea{width:100%;font:inherit;font-size:14px;padding:7px 9px;border:1px solid #d6d3cc;
+    border-radius:7px;background:#fff;color:var(--ink)}
+  input[type=time]{font-variant-numeric:tabular-nums}
+  input[type=range]{padding:0;border:0;background:none;accent-color:#4d4b45}
+  textarea{resize:vertical}
+  .w-time{width:100px;flex:none}
+  .w-sm{width:88px;flex:none}
+  .w-md{width:118px;flex:none}
+  .btn{background:#2b2a26;color:#fff;border:0;border-radius:7px;padding:8px 14px;font-size:14px;
+    font-weight:600;cursor:pointer}
+  .btn.alt{background:#fff;color:#4d4b45;border:1px solid #d6d3cc}
+  .link{background:none;border:0;color:var(--mut);font-size:14px;cursor:pointer;padding:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid #d6d3cc;background:#fff;
+    color:#4d4b45;cursor:pointer}
+  .chip.on{background:#2b2a26;color:#fff;border-color:#2b2a26}
+  .sev{display:flex;align-items:center;gap:8px;margin-top:7px}
+  .sev .nm{width:104px;flex:none;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sev .v{width:14px;font-size:11px;color:var(--mut)}
+  .datenav{display:flex;align-items:center;justify-content:space-between;background:#fff;
+    border:1px solid var(--line);border-radius:10px;padding:7px 10px;margin-bottom:14px}
+  .datenav button{background:none;border:0;font-size:20px;color:#b5b2aa;cursor:pointer;padding:0 8px}
+  .datenav .d{text-align:center;font-size:14px;font-weight:600}
+  .datenav .d small{display:block;font-weight:400;font-size:11px;color:var(--mut);text-decoration:underline}
+  .status{text-align:center;font-size:11px;color:#c3c0b8;padding:4px 0 0}
+  .status.bad{color:#c0392b;font-weight:600}
+  .banner{border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:12px}
+  .banner.bad{border:1px solid #e8b4ae;background:#fdf2f1;color:#a5342a}
+  .banner.ok{border:1px solid #cfe0cd;background:#f2f7f1;color:#4a6b47}
+  .banner.warn{border:1px solid #e3cf9e;background:#fdf8ec;color:#7a5d1f}
+  .banner b{display:block;font-size:13px;margin-bottom:3px}
+  .hist{width:100%;display:flex;justify-content:space-between;align-items:center;background:#fff;
+    border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:8px;font-size:14px;
+    font-weight:600;cursor:pointer;color:var(--ink)}
+  .hist span{font-weight:400;font-size:11px;color:var(--mut);font-variant-numeric:tabular-nums}
+  .tl{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid #f1efeb;font-size:14px}
+  .tl:first-child{border-top:0}
+  .tl .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .tl .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .empty{font-size:13px;color:var(--mut);padding:4px 2px}
+  svg.ch{width:100%;height:auto;display:block}
+  .lg{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--mut);padding:0 0 10px}
+  .lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
+  .note{font-size:11px;color:var(--mut);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Daily Log</h1>
+  <p class="sub">Food · movement · body · mind</p>
+  <div id="banner"></div>
+  <div class="tabs">
+    <button data-tab="log" class="on">Log</button>
+    <button data-tab="trends">Trends</button>
+    <button data-tab="history">History</button>
+    <button data-tab="sync">Sync</button>
+  </div>
+  <div id="view"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ---------- constants ---------- */
+var FOOD_TAGS = ["Dairy","Gluten","High-FODMAP","Spicy","Fried / high-fat","Added sugar",
+  "Artificial sweetener","High-histamine","Carbonated","Egg","Soy","Nuts","Shellfish"];
+var SYMPTOMS = ["Cramps","Bloating","Constipation","Diarrhea","Nausea","Headache","Fatigue",
+  "Depression","Anxiety","Brain fog","Joint pain"];
+var BRISTOL = ["Type 1 — hard lumps","Type 2 — lumpy sausage","Type 3 — cracked sausage",
+  "Type 4 — smooth sausage","Type 5 — soft blobs","Type 6 — mushy","Type 7 — liquid"];
+var COLORS = ["Brown","Green","Yellow","Pale/clay","Black","Red"];
+var VOLUMES = ["Small","Normal","Large"];
+var C = {food:"#5B7B5A",exercise:"#B5651D",meds:"#4A6FA5",bathroom:"#8B5A8C"};
+
+/* ---------- utils ---------- */
+function pad(n){ return (n<10?"0":"")+n; }
+function today(){ var d=new Date(); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function nowTime(){ var d=new Date(); return pad(d.getHours())+":"+pad(d.getMinutes()); }
+function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString(36); }
+function shift(ds,n){ var p=ds.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]+n);
+  return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function labelDate(ds){ var p=ds.split("-"); var d=new Date(+p[0],+p[1]-1,+p[2]);
+  return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function num(v){ var n=parseFloat(v); return isNaN(n)?null:n; }
+
+function emptyDay(){
+  return {food:[],exercise:[],meds:[],bathroom:[],weight:"",sleepHours:"",sleepQuality:"",
+    hydration:"",caffeine:"",alcohol:"",meditation:"",stress:"",happiness:"",energy:"",
+    symptoms:[],notes:""};
+}
+
+/* ---------- storage ---------- */
+var LS = "dailylog.v1";
+var DB = {};
+var storageOk = true;
+var lastSaveOk = true;
+
+function loadDB(){
+  try {
+    var raw = localStorage.getItem(LS);
+    DB = raw ? JSON.parse(raw) : {};
+  } catch(e){ DB = {}; storageOk = false; }
+}
+function saveDB(){
+  try { localStorage.setItem(LS, JSON.stringify(DB)); lastSaveOk = true;
+        META.changes = (META.changes||0)+1; saveMeta(); }
+  catch(e){ lastSaveOk = false; storageOk = false; renderBanner(); }
+  return lastSaveOk;
+}
+function checkStorage(){
+  try {
+    var k="__t"+Date.now();
+    localStorage.setItem(k,"1");
+    var ok = localStorage.getItem(k)==="1";
+    localStorage.removeItem(k);
+    storageOk = ok;
+  } catch(e){ storageOk = false; }
+}
+/* ---------- backup tracking + persistence request ---------- */
+var META = {lastExport:null, changes:0};
+var PERSIST = "not requested";
+var QUOTA = "unknown";
+
+function loadMeta(){
+  try{
+    var raw = localStorage.getItem("dailylog.meta");
+    if(raw){ var m=JSON.parse(raw); META.lastExport=m.lastExport||null; META.changes=m.changes||0; }
+  }catch(e){}
+}
+function saveMeta(){ try{ localStorage.setItem("dailylog.meta", JSON.stringify(META)); }catch(e){} }
+function daysSinceExport(){
+  if(!META.lastExport) return null;
+  var t=new Date(META.lastExport).getTime();
+  if(isNaN(t)) return null;
+  return Math.floor((Date.now()-t)/86400000);
+}
+function needsBackup(){
+  if(META.changes<=0) return false;
+  var d=daysSinceExport();
+  return d===null || d>=7 || META.changes>=25;
+}
+function requestPersist(){
+  try{
+    if(navigator.storage && navigator.storage.persist){
+      navigator.storage.persist().then(function(granted){
+        PERSIST = granted ? "GRANTED (exempt from eviction)" : "DENIED (can be evicted)";
+        renderBanner();
+      }).catch(function(){ PERSIST="request failed"; });
+    } else { PERSIST = "API unavailable in this context"; }
+    if(navigator.storage && navigator.storage.estimate){
+      navigator.storage.estimate().then(function(e){
+        QUOTA = Math.round((e.usage||0)/1024)+" KB used of "
+          + Math.round((e.quota||0)/1048576)+" MB";
+      }).catch(function(){});
+    }
+  }catch(e){ PERSIST="threw: "+e.message; }
+}
+
+/* ---------- persistence markers: the real cross-reload test ---------- */
+var MK = {firstSeen:null, loadCount:0, markerOk:false};
+function markers(){
+  try{
+    var fs = localStorage.getItem("dailylog.firstSeen");
+    if(!fs){ fs = new Date().toISOString(); localStorage.setItem("dailylog.firstSeen", fs); }
+    var lc = parseInt(localStorage.getItem("dailylog.loadCount")||"0",10) || 0;
+    lc = lc + 1;
+    localStorage.setItem("dailylog.loadCount", String(lc));
+    MK.firstSeen = fs; MK.loadCount = lc;
+    MK.markerOk = localStorage.getItem("dailylog.loadCount") === String(lc);
+  }catch(e){ MK.firstSeen="(threw: "+e.message+")"; MK.loadCount=0; MK.markerOk=false; }
+}
+
+function runDiag(){
+  var L=[];
+  var p=function(k,v){ L.push(k+": "+v); };
+
+  p("URL", location.href);
+  p("Origin", location.origin);
+  p("In iframe", (window.self!==window.top)?"yes":"no");
+  try{ p("Parent origin readable", document.referrer||"(none)"); }catch(e){ p("Parent origin readable","blocked"); }
+  p("Cookies enabled", navigator.cookieEnabled);
+  p("---","---");
+
+  p("localStorage type", typeof window.localStorage);
+  var k="__d"+Date.now();
+  try{
+    localStorage.setItem(k,"probe");
+    p("write", "ok");
+    p("read back", localStorage.getItem(k)==="probe" ? "ok (match)" : "MISMATCH");
+    localStorage.removeItem(k);
+    p("delete", localStorage.getItem(k)===null?"ok":"failed");
+  }catch(e){ p("localStorage THREW", e.name+": "+e.message); }
+
+  try{ p("keys present", Object.keys(localStorage).length); }
+  catch(e){ p("keys present","unreadable"); }
+  p("---","---");
+
+  p("PERSISTENCE TEST","");
+  p("  first seen", MK.firstSeen);
+  p("  load count", MK.loadCount);
+  p("  marker written back", MK.markerOk?"yes":"no");
+  p("  verdict", MK.loadCount>1
+      ? "PERSISTED across reloads (count > 1)"
+      : "first load in this browser — reload and re-run to confirm");
+  p("---","---");
+
+  p("logged days stored", allDates().length);
+  p("total entries", allDates().reduce(function(s,d){ var o=getDay(d);
+      return s + o.food.length + o.exercise.length + o.meds.length + o.bathroom.length; },0));
+  p("DB payload bytes", (function(){ try{ return JSON.stringify(DB).length; }catch(e){ return "?"; } })());
+  p("---","---");
+
+  p("window.storage (Claude bridge)", typeof window.storage);
+  if(window.storage && typeof window.storage.set==="function"){
+    p("  note","present but unused by this file");
+  }
+  p("---","---");
+  p("EVICTION PROTECTION","");
+  p("  navigator.storage.persist()", PERSIST);
+  p("  quota", QUOTA);
+  p("---","---");
+  p("BACKUP STATUS","");
+  p("  last export", META.lastExport || "NEVER");
+  p("  days since export", daysSinceExport()===null ? "n/a" : daysSinceExport());
+  p("  changes not yet in a file", META.changes);
+  p("---","---");
+  p("SHEETS SYNC","");
+  p("  configured", syncConfigured()?"yes":"no");
+  p("  url host", SYNC.url ? SYNC.url.replace(/^https?:\/\//,"").split("/")[0] : "(none)");
+  p("  last sync", SYNC.lastSync||"never");
+  p("  last error", SYNC.lastError||"(none)");
+  return L.join("\n");
+}
+
+function getDay(ds){
+  var d = DB[ds]; var base = emptyDay();
+  if(!d) return base;
+  for(var k in d) base[k]=d[k];
+  return base;
+}
+function putDay(ds,day){ DB[ds]=day; return saveDB(); }
+function allDates(){ return Object.keys(DB).sort(); }
+
+/* ---------- google sheets sync ---------- */
+var SYNC = {url:"", token:"", lastSync:null, lastError:"", pingResult:"", busy:false, autoTimer:null};
+
+function loadSync(){
+  try{
+    var raw=localStorage.getItem("dailylog.sync");
+    if(raw){ var s=JSON.parse(raw);
+      SYNC.url=s.url||""; SYNC.token=s.token||""; SYNC.lastSync=s.lastSync||null; }
+  }catch(e){}
+}
+function saveSync(){
+  try{ localStorage.setItem("dailylog.sync",
+    JSON.stringify({url:SYNC.url,token:SYNC.token,lastSync:SYNC.lastSync})); }catch(e){}
+}
+function syncConfigured(){ return !!(SYNC.url && SYNC.token); }
+
+/* merge: whichever copy of a given day was edited most recently wins */
+function mergeRemote(remoteDays){
+  var pulled=0;
+  for(var d in remoteDays){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+    var r=remoteDays[d], l=DB[d];
+    if(!l){ DB[d]=r; pulled++; continue; }
+    var rt=Date.parse(r.updatedAt||0)||0, lt=Date.parse(l.updatedAt||0)||0;
+    if(rt>lt){ DB[d]=r; pulled++; }
+  }
+  return {pulled:pulled};
+}
+
+function syncNow(cb){
+  if(!syncConfigured()){ SYNC.lastError="Not configured yet."; renderSyncStatus(); if(cb) cb(false); return; }
+  SYNC.busy=true; SYNC.lastError=""; renderSyncStatus();
+
+  fetch(SYNC.url,{
+    method:"POST",
+    /* text/plain avoids a CORS preflight, which Apps Script cannot answer */
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({token:SYNC.token,days:DB}),
+    redirect:"follow"
+  })
+  .then(function(r){ return r.text(); })
+  .then(function(txt){
+    var res;
+    try{ res=JSON.parse(txt); }
+    catch(e){
+      throw new Error("Server didn't return JSON. Check the deployment's \"Who has access\" "
+        + "is set to Anyone. Got: "+txt.slice(0,120));
+    }
+    if(!res.ok) throw new Error(res.error||"unknown server error");
+    var m=mergeRemote(res.days||{});
+    saveDB();
+    SYNC.lastSync=new Date().toISOString(); saveSync();
+    SYNC.busy=false;
+    render();
+    if(cb) cb(true,m);
+  })
+  .catch(function(err){
+    SYNC.busy=false;
+    SYNC.lastError=err&&err.message?err.message:String(err);
+    renderSyncStatus();
+    if(cb) cb(false);
+  });
+}
+
+function syncPing(){
+  if(!syncConfigured()){ SYNC.lastError="Enter the URL and token first."; renderSyncStatus(); return; }
+  SYNC.busy=true; SYNC.lastError=""; SYNC.pingResult=""; renderSyncStatus();
+  var u=SYNC.url+(SYNC.url.indexOf("?")>=0?"&":"?")
+      +"action=ping&token="+encodeURIComponent(SYNC.token);
+  fetch(u,{redirect:"follow"})
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      var res;
+      try{ res=JSON.parse(t); }catch(e){ throw new Error("Not JSON: "+t.slice(0,120)); }
+      if(!res.ok) throw new Error(res.error);
+      SYNC.busy=false;
+      SYNC.pingResult='Connected to "'+res.sheet+'" — '+res.days+' day(s) already stored.';
+      renderSyncStatus();
+    })
+    .catch(function(err){
+      SYNC.busy=false;
+      SYNC.lastError=err&&err.message?err.message:String(err);
+      renderSyncStatus();
+    });
+}
+
+function scheduleAutoSync(){
+  if(!syncConfigured()) return;
+  clearTimeout(SYNC.autoTimer);
+  SYNC.autoTimer=setTimeout(function(){ syncNow(); },4000);
+}
+
+/* ---------- app state ---------- */
+var tab = "log";
+var date = today();
+var day = emptyDay();
+var openForm = null;          // 'food' | 'exercise' | 'meds' | 'bathroom'
+var draft = {};               // in-progress new entry
+var saveTimer = null;
+
+function setDay(patch, immediate){
+  for(var k in patch) day[k]=patch[k];
+  day.updatedAt = new Date().toISOString();
+  DB[date]=day;
+  if(immediate){ saveDB(); showStatus(); scheduleAutoSync(); }
+  else {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){ saveDB(); showStatus(); scheduleAutoSync(); }, 250);
+  }
+}
+function showStatus(){
+  var el=document.getElementById("status");
+  if(!el) return;
+  el.className = "status" + (lastSaveOk?"":" bad");
+  el.textContent = lastSaveOk ? "saved" : "NOT SAVED — storage blocked";
+}
+
+/* ---------- banner ---------- */
+function renderBanner(){
+  var el=document.getElementById("banner");
+  if(!el) return;
+  var out="";
+  if(!storageOk){
+    out += '<div class="banner bad"><b>Storage is blocked here</b>'
+      + 'Entries will not persist at all. Export a backup now, before you enter anything else.'
+      + '<div style="margin-top:7px"><button class="btn" data-act="export">Export backup</button></div></div>';
+  } else if(needsBackup()){
+    var d=daysSinceExport();
+    out += '<div class="banner warn"><b>Time to back up</b>'
+      + META.changes + ' unsaved-to-file change' + (META.changes===1?"":"s")
+      + (d===null ? ' and no backup has ever been exported.' : ' since your last backup ' + d + ' days ago.')
+      + ' Browser storage can be cleared without warning — the exported file is the only copy that lasts.'
+      + '<div style="margin-top:7px"><button class="btn" data-act="export">Export backup</button></div></div>';
+  }
+  el.innerHTML = out;
+}
+
+/* ---------- rendering: log ---------- */
+function card(key,label,color,count,inner){
+  return '<div class="card"><div class="accent" style="background:'+color+'"></div>'
+    + '<div class="chead"><h3>'+label+'</h3>'
+    + (count?'<span class="n">'+count+'</span>':'')+'</div>'+inner+'</div>';
+}
+function rowHTML(kind,id,time,primary,secondary){
+  return '<div class="row"><span class="t">'+esc(time||"")+'</span><div class="m">'
+    + '<div class="p">'+esc(primary)+'</div>'
+    + (secondary?'<div class="s">'+esc(secondary)+'</div>':'')
+    + '</div><button class="x" data-del="'+kind+'" data-id="'+id+'">&#10005;</button></div>';
+}
+function join(a){ return a.filter(function(x){return x;}).join(" · "); }
+
+function foodSummary(f){
+  return join([ f.calories&&f.calories+" cal", f.protein&&f.protein+"g protein",
+    f.carbs&&f.carbs+"g carb", f.fat&&f.fat+"g fat", f.processed ].concat(f.tags||[]));
+}
+function bathSummary(b){
+  if(b.went!=="yes") return "";
+  return join([ b.color&&b.color!=="Brown"?b.color:null, b.volume,
+    b.urgency?"urgency "+b.urgency:null, b.duration&&b.duration+" min on toilet",
+    b.burning==="yes"?"burning":null, b.straining==="yes"?"straining":null,
+    b.blood==="yes"?"\u26A0 blood":null ]);
+}
+
+function foodCard(){
+  var inner="";
+  day.food.forEach(function(f){ inner+=rowHTML("food",f.id,f.time,f.name,foodSummary(f)); });
+  if(openForm==="food"){
+    var tags = draft.tags||[];
+    inner += '<div class="form">'
+      + '<div class="flex"><input id="f-name" placeholder="What did you eat?" value="'+esc(draft.name||"")+'" style="flex:1">'
+      + '<input id="f-time" class="w-time" type="time" value="'+esc(draft.time||nowTime())+'"></div>'
+      + '<div class="grid4">'
+      + '<input id="f-cal" type="number" inputmode="numeric" placeholder="Cal" value="'+esc(draft.calories||"")+'">'
+      + '<input id="f-fat" type="number" inputmode="numeric" placeholder="Fat g" value="'+esc(draft.fat||"")+'">'
+      + '<input id="f-carb" type="number" inputmode="numeric" placeholder="Carb g" value="'+esc(draft.carbs||"")+'">'
+      + '<input id="f-pro" type="number" inputmode="numeric" placeholder="Prot g" value="'+esc(draft.protein||"")+'"></div>'
+      + '<select id="f-proc">'
+      + ['fresh','mixed','processed'].map(function(o){
+          return '<option value="'+o+'"'+((draft.processed||"fresh")===o?" selected":"")+'>'
+            +({fresh:"Fresh / whole",mixed:"Mixed",processed:"Processed"})[o]+'</option>'; }).join("")
+      + '</select>'
+      + '<div><label class="f">Possible triggers</label><div class="chips">'
+      + FOOD_TAGS.map(function(t){
+          return '<button class="chip'+(tags.indexOf(t)>=0?" on":"")+'" data-ftag="'+esc(t)+'">'+esc(t)+'</button>'; }).join("")
+      + (tags.filter(function(t){return FOOD_TAGS.indexOf(t)<0;}).map(function(t){
+          return '<button class="chip on" data-ftag="'+esc(t)+'">'+esc(t)+'</button>'; }).join(""))
+      + '</div>'
+      + '<div class="flex" style="margin-top:6px"><input id="f-ctag" placeholder="Add another tag…" style="flex:1">'
+      + '<button class="btn alt" data-act="addftag">+</button></div></div>'
+      + '<div class="flex"><button class="btn" data-act="save-food">Add</button>'
+      + '<button class="link" data-act="cancel">Cancel</button></div></div>';
+  } else {
+    inner += '<button class="addbtn" data-open="food">+ Log food</button>';
+  }
+  return card("food","Food",C.food,day.food.length,inner);
+}
+
+function exerciseCard(){
+  var inner="";
+  day.exercise.forEach(function(x){
+    inner+=rowHTML("exercise",x.id,x.time,x.type,x.duration?x.duration+" min":""); });
+  if(openForm==="exercise"){
+    inner += '<div class="form"><div class="flex">'
+      + '<input id="x-type" placeholder="Activity" value="'+esc(draft.type||"")+'" style="flex:1">'
+      + '<input id="x-dur" class="w-sm" type="number" inputmode="numeric" placeholder="Min" value="'+esc(draft.duration||"")+'">'
+      + '<input id="x-time" class="w-time" type="time" value="'+esc(draft.time||nowTime())+'"></div>'
+      + '<div class="flex"><button class="btn" data-act="save-exercise">Add</button>'
+      + '<button class="link" data-act="cancel">Cancel</button></div></div>';
+  } else {
+    inner += '<button class="addbtn" data-open="exercise">+ Log exercise</button>';
+  }
+  return card("exercise","Movement",C.exercise,day.exercise.length,inner);
+}
+
+function medsCard(){
+  var inner="";
+  day.meds.forEach(function(m){ inner+=rowHTML("meds",m.id,m.time,m.name,m.dose); });
+  if(openForm==="meds"){
+    inner += '<div class="form"><div class="flex">'
+      + '<input id="m-name" placeholder="Name" value="'+esc(draft.name||"")+'" style="flex:1">'
+      + '<input id="m-dose" class="w-sm" placeholder="Dose" value="'+esc(draft.dose||"")+'">'
+      + '<input id="m-time" class="w-time" type="time" value="'+esc(draft.time||nowTime())+'"></div>'
+      + '<div class="flex"><button class="btn" data-act="save-meds">Add</button>'
+      + '<button class="link" data-act="cancel">Cancel</button></div></div>';
+  } else {
+    inner += '<button class="addbtn" data-open="meds">+ Log med / supplement</button>';
+  }
+  return card("meds","Meds &amp; Supplements",C.meds,day.meds.length,inner);
+}
+
+function bathroomCard(){
+  var inner="";
+  day.bathroom.forEach(function(b){
+    inner+=rowHTML("bathroom",b.id,b.time,
+      b.went==="yes"?"Bristol "+b.bristol:"No BM", bathSummary(b)); });
+  if(openForm==="bathroom"){
+    var went = draft.went||"yes";
+    var sel=function(id,list,cur,cls){
+      return '<select id="'+id+'"'+(cls?' class="'+cls+'"':'')+'>'
+        + list.map(function(o){
+            var v=o.v!==undefined?o.v:o, t=o.t!==undefined?o.t:o;
+            return '<option value="'+esc(v)+'"'+(String(cur)===String(v)?" selected":"")+'>'+esc(t)+'</option>';
+          }).join("") + '</select>';
+    };
+    inner += '<div class="form">'
+      + '<div class="flex">'
+      + sel("b-went",[{v:"yes",t:"Went"},{v:"no",t:"Didn\u2019t go"}],went,"w-md")
+      + '<input id="b-time" class="w-time" type="time" value="'+esc(draft.time||nowTime())+'"></div>';
+    if(went==="yes"){
+      inner += '<div class="flex">'
+        + sel("b-bristol",BRISTOL.map(function(t,i){return {v:i+1,t:t};}),draft.bristol||4)
+        + '</div><div class="flex">'
+        + sel("b-color",COLORS,draft.color||"Brown","w-md")
+        + sel("b-volume",VOLUMES,draft.volume||"Normal","w-md")
+        + '<input id="b-dur" class="w-sm" type="number" inputmode="numeric" placeholder="Min" value="'+esc(draft.duration||"")+'">'
+        + '</div>'
+        + '<div><label class="f">Urgency (1 mild – 5 urgent) — <b id="b-ulab">'+esc(draft.urgency||2)+'</b></label>'
+        + '<input id="b-urg" type="range" min="1" max="5" value="'+esc(draft.urgency||2)+'"></div>'
+        + '<div class="flex">'
+        + sel("b-burn",[{v:"no",t:"No burning"},{v:"yes",t:"Burning"}],draft.burning||"no","w-md")
+        + sel("b-strain",[{v:"no",t:"No straining"},{v:"yes",t:"Straining"}],draft.straining||"no","w-md")
+        + sel("b-blood",[{v:"no",t:"No blood"},{v:"yes",t:"Blood present"}],draft.blood||"no","w-md")
+        + '</div>';
+    }
+    inner += '<div class="flex"><button class="btn" data-act="save-bathroom">Add</button>'
+      + '<button class="link" data-act="cancel">Cancel</button></div></div>';
+  } else {
+    inner += '<button class="addbtn" data-open="bathroom">+ Log bathroom visit</button>';
+  }
+  return card("bathroom","Bathroom",C.bathroom,day.bathroom.length,inner);
+}
+
+function bodyCard(){
+  function n(id,lab,val,step){
+    return '<div><label class="f">'+lab+'</label><input data-fld="'+id+'" type="number" inputmode="decimal"'
+      +(step?' step="'+step+'"':'')+' placeholder="—" value="'+esc(val)+'"></div>';
+  }
+  function t(id,lab,val,ph){
+    return '<div><label class="f">'+lab+'</label><input data-fld="'+id+'" placeholder="'+ph+'" value="'+esc(val)+'"></div>';
+  }
+  function r(id,lab,val,max,lo,hi){
+    return '<div><label class="f">'+lab+' — <b data-lab="'+id+'">'+(val||"—")+'</b></label>'
+      + '<input data-fld="'+id+'" data-range="1" type="range" min="1" max="'+max+'" value="'+(val||1)+'">'
+      + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#b5b2aa">'
+      + '<span>'+lo+'</span><span>'+hi+'</span></div></div>';
+  }
+  var inner = '<div class="body">'
+    + '<div class="grid2">'
+    + n("weight","Weight (lb)",day.weight)
+    + n("sleepHours","Sleep (hrs)",day.sleepHours,"0.25")
+    + n("hydration","Hydration (oz)",day.hydration)
+    + n("meditation","Meditation (min)",day.meditation)
+    + t("caffeine","Caffeine",day.caffeine,"e.g. 2 coffees")
+    + t("alcohol","Alcohol",day.alcohol,"e.g. 1 beer")
+    + '</div>'
+    + '<div style="margin-top:12px">'+r("sleepQuality","Sleep quality (1–5)",day.sleepQuality,5,"poor","great")+'</div>'
+    + '<div style="margin-top:12px">'+r("stress","Stress (1–5)",day.stress,5,"calm","high")+'</div>'
+    + '<div style="margin-top:12px">'+r("happiness","Happiness (1–10)",day.happiness,10,"low","great")+'</div>'
+    + '<div style="margin-top:12px">'+r("energy","Energy (1–10)",day.energy,10,"drained","wired")+'</div>'
+    + '</div>';
+  return card("body","Body &amp; Mind",C.meds&&"#6B6B4A",0,inner);
+}
+
+function symptomCard(){
+  var names = day.symptoms.map(function(s){return s.name;});
+  var extra = names.filter(function(n){ return SYMPTOMS.indexOf(n)<0; });
+  var inner = '<div class="body"><div class="chips">'
+    + SYMPTOMS.concat(extra).map(function(s){
+        return '<button class="chip'+(names.indexOf(s)>=0?" on":"")+'" data-sym="'+esc(s)+'">'+esc(s)+'</button>'; }).join("")
+    + '</div>'
+    + '<div class="flex" style="margin-top:9px"><input id="s-custom" placeholder="Add another symptom…" style="flex:1">'
+    + '<button class="btn alt" data-act="addsym">+</button></div>';
+  day.symptoms.forEach(function(s){
+    inner += '<div class="sev"><span class="nm">'+esc(s.name)+'</span>'
+      + '<input type="range" min="1" max="5" value="'+s.severity+'" data-sev="'+esc(s.name)+'">'
+      + '<span class="v">'+s.severity+'</span>'
+      + '<button class="x" data-symdel="'+esc(s.name)+'">&#10005;</button></div>';
+  });
+  inner += '<textarea data-fld="notes" rows="2" placeholder="Other notes for the day…" '
+    + 'style="margin-top:10px">'+esc(day.notes)+'</textarea></div>';
+  return card("sym","Symptoms",C.food&&"#A05252",day.symptoms.length,inner);
+}
+
+function timelineCard(){
+  var ev=[];
+  day.food.forEach(function(f){ ev.push({t:f.time,l:f.name,k:"food"}); });
+  day.exercise.forEach(function(x){ ev.push({t:x.time,l:x.type+(x.duration?" · "+x.duration+"m":""),k:"exercise"}); });
+  day.meds.forEach(function(m){ ev.push({t:m.time,l:m.name,k:"meds"}); });
+  day.bathroom.forEach(function(b){ ev.push({t:b.time,
+    l:(b.went==="yes"?"BM · Bristol "+b.bristol+(b.duration?" · "+b.duration+"m":"")
+      +(b.blood==="yes"?" · \u26A0 blood":""):"No BM"),k:"bathroom"}); });
+  ev = ev.filter(function(e){return e.t;}).sort(function(a,b){return a.t<b.t?-1:1;});
+  if(!ev.length) return "";
+  var inner='<div class="body">'+ev.map(function(e){
+    return '<div class="tl"><span class="t" style="font-size:11px;color:#b5b2aa;width:44px;flex:none">'
+      +esc(e.t)+'</span><span class="dot" style="background:'+C[e.k]+'"></span>'
+      +'<span class="lb">'+esc(e.l)+'</span></div>'; }).join("")+'</div>';
+  return '<div class="card"><div class="chead"><h3>Today\u2019s timeline</h3></div>'+inner+'</div>';
+}
+
+function renderLog(){
+  var isToday = date===today();
+  return '<div class="datenav">'
+    + '<button data-nav="-1">&#8249;</button>'
+    + '<div class="d">'+esc(labelDate(date))
+    + (isToday?"":'<small data-nav="today">back to today</small>')+'</div>'
+    + '<button data-nav="1"'+(isToday?' style="opacity:.2"':'')+'>&#8250;</button></div>'
+    + timelineCard() + foodCard() + exerciseCard() + medsCard() + bathroomCard()
+    + bodyCard() + symptomCard()
+    + '<div id="status" class="status">saved</div>';
+}
+
+/* ---------- charts ---------- */
+function chartSVG(rows,series,opts){
+  opts = opts||{};
+  var W=520,H=opts.h||190,PL=34,PR=14,PT=10,PB=22;
+  var iw=W-PL-PR, ih=H-PT-PB;
+  var vals=[];
+  series.forEach(function(s){ rows.forEach(function(r){ var v=r[s.key];
+    if(v!==null&&v!==undefined&&!isNaN(v)) vals.push(v); }); });
+  if(!vals.length) return '<div class="empty">No data yet.</div>';
+  var mn = opts.min!==undefined?opts.min:Math.min.apply(null,vals);
+  var mx = opts.max!==undefined?opts.max:Math.max.apply(null,vals);
+  if(mn===mx){ mn=mn-1; mx=mx+1; }
+  if(opts.zero) mn=0;
+  var n=rows.length;
+  var X=function(i){ return PL + (n<=1?iw/2:iw*i/(n-1)); };
+  var Y=function(v){ return PT + ih - ih*(v-mn)/(mx-mn); };
+  var out='<svg class="ch" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
+  for(var g=0;g<=3;g++){
+    var gy=PT+ih*g/3;
+    out+='<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#eeecE8" stroke-width="1"/>';
+    var gv=mx-(mx-mn)*g/3;
+    out+='<text x="'+(PL-5)+'" y="'+(gy+3)+'" font-size="9" fill="#b5b2aa" text-anchor="end">'
+      +(Math.round(gv*10)/10)+'</text>';
+  }
+  series.forEach(function(s){
+    if(s.bar){
+      var bw=Math.max(2,iw/Math.max(n,1)*0.55);
+      rows.forEach(function(r,i){
+        var v=r[s.key]; if(v===null||v===undefined||isNaN(v)||v===0) return;
+        var y=Y(v);
+        out+='<rect x="'+(X(i)-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+Math.max(0,PT+ih-y)
+          +'" fill="'+s.color+'" rx="2"/>';
+      });
+    } else {
+      var pts=[];
+      rows.forEach(function(r,i){ var v=r[s.key];
+        if(v!==null&&v!==undefined&&!isNaN(v)) pts.push(X(i)+","+Y(v)); });
+      if(pts.length>1) out+='<polyline fill="none" stroke="'+s.color+'" stroke-width="2" points="'+pts.join(" ")+'"/>';
+      else if(pts.length===1){ var p=pts[0].split(",");
+        out+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3" fill="'+s.color+'"/>'; }
+    }
+  });
+  var step=Math.ceil(n/5);
+  rows.forEach(function(r,i){
+    if(i%step!==0 && i!==n-1) return;
+    out+='<text x="'+X(i)+'" y="'+(H-6)+'" font-size="9" fill="#b5b2aa" text-anchor="middle">'
+      +esc(r.label)+'</text>';
+  });
+  out+='</svg>';
+  var lg = series.filter(function(s){return s.name;});
+  if(lg.length>1) out+='<div class="lg">'+lg.map(function(s){
+    return '<span><i style="background:'+s.color+'"></i>'+esc(s.name)+'</span>'; }).join("")+'</div>';
+  return out;
+}
+function barsSVG(items,color){
+  if(!items.length) return '<div class="empty">No data yet.</div>';
+  var mx=Math.max.apply(null,items.map(function(i){return i.count;}));
+  var out='';
+  items.forEach(function(i){
+    out+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
+      + '<span style="width:100px;flex:none;font-size:12px;overflow:hidden;text-overflow:ellipsis;'
+      + 'white-space:nowrap">'+esc(i.name)+'</span>'
+      + '<span style="flex:1;background:#f1efeb;border-radius:3px;height:14px;overflow:hidden">'
+      + '<span style="display:block;height:100%;width:'+(i.count/mx*100)+'%;background:'+color+'"></span></span>'
+      + '<span style="width:20px;font-size:11px;color:#8b8880;text-align:right">'+i.count+'</span></div>';
+  });
+  return '<div class="body">'+out+'</div>';
+}
+
+function renderTrends(){
+  var ds = allDates().slice(-60);
+  if(!ds.length) return '<div class="empty">No entries yet — start logging and trends will appear here.</div>';
+  var rows = ds.map(function(d){
+    var o=getDay(d);
+    var bm=(o.bathroom||[]).filter(function(b){return b.went==="yes";});
+    var br=bm.map(function(b){return num(b.bristol);}).filter(function(v){return v!==null;});
+    return {
+      label: d.slice(5),
+      weight:num(o.weight), happiness:num(o.happiness), energy:num(o.energy),
+      sleepHours:num(o.sleepHours), sleepQuality:num(o.sleepQuality), stress:num(o.stress),
+      hydration:num(o.hydration), meditation:num(o.meditation),
+      exercise:(o.exercise||[]).reduce(function(s,e){return s+(num(e.duration)||0);},0),
+      calories:(o.food||[]).reduce(function(s,f){return s+(num(f.calories)||0);},0),
+      bmCount:bm.length,
+      avgBristol: br.length? br.reduce(function(a,b){return a+b;},0)/br.length : null
+    };
+  });
+  function ch(label,color,inner){
+    return '<div class="card"><div class="accent" style="background:'+color+'"></div>'
+      + '<div class="chead"><h3>'+label+'</h3></div><div class="body">'+inner+'</div></div>';
+  }
+  var out="";
+  out += ch("Weight","#6B6B4A", chartSVG(rows,[{key:"weight",color:"#6B6B4A"}]));
+  out += ch("Happiness &amp; energy","#D98E29", chartSVG(rows,[
+    {key:"happiness",color:"#D98E29",name:"Happiness"},
+    {key:"energy",color:"#4A6FA5",name:"Energy"}],{min:0,max:10}));
+  out += ch("Sleep hours","#4A6FA5", chartSVG(rows,[{key:"sleepHours",color:"#4A6FA5"}],{min:0,max:12}));
+  out += ch("Sleep quality","#8B5A8C", chartSVG(rows,[{key:"sleepQuality",color:"#8B5A8C"}],{min:0,max:5}));
+  out += ch("Stress","#A05252", chartSVG(rows,[{key:"stress",color:"#A05252"}],{min:0,max:5}));
+  out += ch("Exercise (min/day)","#B5651D", chartSVG(rows,[{key:"exercise",color:"#B5651D",bar:1}],{zero:1}));
+  out += ch("Meditation (min/day)","#6B6B4A", chartSVG(rows,[{key:"meditation",color:"#6B6B4A",bar:1}],{zero:1}));
+  out += ch("Daily calories","#5B7B5A", chartSVG(rows,[{key:"calories",color:"#5B7B5A"}]));
+  out += ch("Hydration (oz/day)","#4A6FA5", chartSVG(rows,[{key:"hydration",color:"#4A6FA5"}],{zero:1}));
+  out += ch("Bathroom: count &amp; avg Bristol","#8B5A8C", chartSVG(rows,[
+    {key:"bmCount",color:"#8B5A8C",bar:1,name:"BMs/day"}],{zero:1})
+    + chartSVG(rows,[{key:"avgBristol",color:"#D98E29",name:"Avg Bristol"}],{min:1,max:7,h:150}));
+
+  var sc={}, tc={};
+  ds.forEach(function(d){ var o=getDay(d);
+    (o.symptoms||[]).forEach(function(s){ sc[s.name]=(sc[s.name]||0)+1; });
+    (o.food||[]).forEach(function(f){ (f.tags||[]).forEach(function(t){ tc[t]=(tc[t]||0)+1; }); });
+  });
+  function toArr(m){ return Object.keys(m).map(function(k){return {name:k,count:m[k]};})
+    .sort(function(a,b){return b.count-a.count;}); }
+  var sa=toArr(sc), ta=toArr(tc);
+  if(sa.length) out += '<div class="card"><div class="accent" style="background:#A05252"></div>'
+    + '<div class="chead"><h3>Symptom frequency</h3></div>'+barsSVG(sa,"#A05252")+'</div>';
+  if(ta.length) out += '<div class="card"><div class="accent" style="background:#5B7B5A"></div>'
+    + '<div class="chead"><h3>Food trigger frequency</h3></div>'+barsSVG(ta,"#5B7B5A")+'</div>';
+  return out;
+}
+
+function renderHistory(){
+  var out = '<div class="card"><div class="accent" style="background:#4A6FA5"></div>'
+    + '<div class="chead"><h3>Backup</h3></div><div class="body">'
+    + '<p class="note">Your data lives in this browser only. Export regularly so you always have a copy — '
+    + 'clearing site data or switching phones will wipe it otherwise.</p>'
+    + '<div class="flex" style="margin-top:8px">'
+    + '<button class="btn" data-act="export">Export backup</button>'
+    + '<button class="btn alt" data-act="import">Restore backup</button>'
+    + '<input type="file" id="impfile" accept="application/json,.json" style="display:none">'
+    + '</div><p class="note" id="bmsg" style="margin-top:7px"></p></div></div>'
+    + '<div class="card"><div class="accent" style="background:#2b2a26"></div>'
+    + '<div class="chead"><h3>Diagnostics</h3></div><div class="body">'
+    + '<p class="note">Reports whether this browser is actually keeping your data. '
+    + 'Reload the page and run it again — if <b>load count</b> goes up, persistence is working.</p>'
+    + '<div class="flex" style="margin-top:8px">'
+    + '<button class="btn" data-act="diag">Run diagnostics</button></div>'
+    + '<pre id="diagout" style="display:none;margin-top:10px;background:#22211e;color:#8fe388;'
+    + 'font-size:10px;line-height:1.6;padding:10px;border-radius:7px;white-space:pre-wrap;'
+    + 'font-family:ui-monospace,Menlo,Consolas,monospace;overflow-x:auto"></pre>'
+    + '</div></div>';
+  var ds = allDates().sort().reverse();
+  if(!ds.length) return out + '<div class="empty">No entries yet.</div>';
+  out += ds.map(function(d){
+    return '<button class="hist" data-goto="'+d+'">'+esc(labelDate(d))+'<span>'+d+'</span></button>'; }).join("");
+  return out;
+}
+
+/* ---------- sync tab ---------- */
+function renderSyncStatus(){
+  var el=document.getElementById("syncstatus");
+  if(!el) return;
+  var h="";
+  if(SYNC.busy) h+='<p class="note">Syncing…</p>';
+  if(SYNC.pingResult) h+='<div class="banner ok" style="margin:8px 0 0">'+esc(SYNC.pingResult)+'</div>';
+  if(SYNC.lastError) h+='<div class="banner bad" style="margin:8px 0 0"><b>Sync failed</b>'
+    + esc(SYNC.lastError)+'</div>';
+  if(SYNC.lastSync && !SYNC.busy) h+='<p class="note" style="margin-top:8px">Last synced: '
+    + esc(new Date(SYNC.lastSync).toLocaleString())+'</p>';
+  el.innerHTML=h;
+}
+
+function renderSync(){
+  var on=syncConfigured();
+  return '<div class="card"><div class="accent" style="background:#0F9D58"></div>'
+    + '<div class="chead"><h3>Google Sheets sync</h3>'
+    + (on?'<span class="n">on</span>':'')+'</div><div class="body">'
+    + '<p class="note">With this on, your Sheet is the permanent home for your data. '
+    + 'Browser storage becomes just a cache — clear it, switch phones, or come back in six '
+    + 'months and everything is still in the Sheet.</p>'
+    + '<div style="margin-top:10px"><label class="f">Web app URL (ends in /exec)</label>'
+    + '<input id="sy-url" placeholder="https://script.google.com/macros/s/…/exec" '
+    + 'value="'+esc(SYNC.url)+'" autocomplete="off" autocapitalize="off" spellcheck="false"></div>'
+    + '<div style="margin-top:8px"><label class="f">Token (must match the script)</label>'
+    + '<input id="sy-token" value="'+esc(SYNC.token)+'" autocomplete="off" '
+    + 'autocapitalize="off" spellcheck="false"></div>'
+    + '<div class="flex" style="margin-top:10px">'
+    + '<button class="btn alt" data-act="sy-save">Save</button>'
+    + '<button class="btn alt" data-act="sy-test">Test connection</button>'
+    + '<button class="btn" data-act="sy-now">Sync now</button></div>'
+    + '<div id="syncstatus"></div>'
+    + '</div></div>'
+    + '<div class="card"><div class="accent" style="background:#2b2a26"></div>'
+    + '<div class="chead"><h3>Setup steps</h3></div><div class="body">'
+    + '<p class="note">1. Make a new Google Sheet.<br>'
+    + '2. Extensions &gt; Apps Script. Delete what\u2019s there, paste in the Code.gs I gave you.<br>'
+    + '3. Change <b>TOKEN</b> at the top to a long random string. Save.<br>'
+    + '4. Run <b>testSetup</b> once and approve the permission prompt.<br>'
+    + '5. Deploy &gt; New deployment &gt; Web app. Execute as <b>Me</b>, '
+    + 'access <b>Anyone</b>. Copy the /exec URL.<br>'
+    + '6. Paste that URL and the same token above, then Test connection.</p>'
+    + '<p class="note" style="margin-top:8px">Sync runs automatically a few seconds after '
+    + 'you change anything, and whenever you open the app.</p>'
+    + '</div></div>';
+}
+
+/* ---------- render root ---------- */
+function render(){
+  day = getDay(date);
+  var v=document.getElementById("view");
+  v.innerHTML = tab==="log"?renderLog() : tab==="trends"?renderTrends()
+              : tab==="sync"?renderSync() : renderHistory();
+  if(tab==="sync") renderSyncStatus();
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button"),function(b){
+    b.className = b.getAttribute("data-tab")===tab ? "on" : ""; });
+  renderBanner();
+}
+
+/* ---------- events ---------- */
+document.querySelector(".tabs").addEventListener("click",function(e){
+  var b=e.target.closest("button[data-tab]"); if(!b) return;
+  tab=b.getAttribute("data-tab"); openForm=null; draft={}; render();
+});
+
+function readFoodDraft(){
+  var g=function(id){ var el=document.getElementById(id); return el?el.value:""; };
+  draft.name=g("f-name"); draft.calories=g("f-cal"); draft.fat=g("f-fat");
+  draft.carbs=g("f-carb"); draft.protein=g("f-pro"); draft.processed=g("f-proc");
+  draft.time=g("f-time")||nowTime();
+}
+function readBathDraft(){
+  var g=function(id){ var el=document.getElementById(id); return el?el.value:undefined; };
+  var w=g("b-went"); if(w!==undefined) draft.went=w;
+  var t=g("b-time"); if(t!==undefined) draft.time=t;
+  var b=g("b-bristol"); if(b!==undefined) draft.bristol=b;
+  var c=g("b-color"); if(c!==undefined) draft.color=c;
+  var v=g("b-volume"); if(v!==undefined) draft.volume=v;
+  var d=g("b-dur"); if(d!==undefined) draft.duration=d;
+  var u=g("b-urg"); if(u!==undefined) draft.urgency=u;
+  var bu=g("b-burn"); if(bu!==undefined) draft.burning=bu;
+  var st=g("b-strain"); if(st!==undefined) draft.straining=st;
+  var bl=g("b-blood"); if(bl!==undefined) draft.blood=bl;
+}
+
+document.getElementById("view").addEventListener("click",function(e){
+  var t=e.target;
+
+  var nav=t.closest("[data-nav]");
+  if(nav){ var n=nav.getAttribute("data-nav");
+    date = n==="today"?today():shift(date,+n);
+    if(date>today()) date=today();
+    openForm=null; draft={}; render(); return; }
+
+  var op=t.closest("[data-open]");
+  if(op){ openForm=op.getAttribute("data-open"); draft={time:nowTime()}; render(); return; }
+
+  var act=t.closest("[data-act]");
+  if(act){
+    var a=act.getAttribute("data-act");
+    if(a==="cancel"){ openForm=null; draft={}; render(); return; }
+    if(a==="addftag"){
+      readFoodDraft();
+      var i=document.getElementById("f-ctag"), val=i?i.value.trim():"";
+      if(val){ draft.tags=(draft.tags||[]).concat(draft.tags&&draft.tags.indexOf(val)>=0?[]:[val]); }
+      render(); return;
+    }
+    if(a==="save-food"){
+      readFoodDraft();
+      if(!draft.name){ return; }
+      day.food.push({id:uid(),name:draft.name,calories:draft.calories,fat:draft.fat,
+        carbs:draft.carbs,protein:draft.protein,processed:draft.processed,
+        tags:(draft.tags||[]).slice(),time:draft.time});
+      setDay({},true); openForm=null; draft={}; render(); return;
+    }
+    if(a==="save-exercise"){
+      var ty=document.getElementById("x-type").value.trim();
+      if(!ty) return;
+      day.exercise.push({id:uid(),type:ty,
+        duration:document.getElementById("x-dur").value,
+        time:document.getElementById("x-time").value||nowTime()});
+      setDay({},true); openForm=null; draft={}; render(); return;
+    }
+    if(a==="save-meds"){
+      var mn=document.getElementById("m-name").value.trim();
+      if(!mn) return;
+      day.meds.push({id:uid(),name:mn,
+        dose:document.getElementById("m-dose").value,
+        time:document.getElementById("m-time").value||nowTime()});
+      setDay({},true); openForm=null; draft={}; render(); return;
+    }
+    if(a==="save-bathroom"){
+      readBathDraft();
+      var ent={id:uid(),went:draft.went||"yes",time:draft.time||nowTime()};
+      if(ent.went==="yes"){
+        ent.bristol=draft.bristol||"4"; ent.color=draft.color||"Brown";
+        ent.volume=draft.volume||"Normal"; ent.duration=draft.duration||"";
+        ent.urgency=draft.urgency||"2"; ent.burning=draft.burning||"no";
+        ent.straining=draft.straining||"no"; ent.blood=draft.blood||"no";
+      }
+      day.bathroom.push(ent);
+      setDay({},true); openForm=null; draft={}; render(); return;
+    }
+    if(a==="addsym"){
+      var si=document.getElementById("s-custom"), sv=si?si.value.trim():"";
+      if(sv && !day.symptoms.some(function(s){return s.name===sv;})){
+        day.symptoms.push({name:sv,severity:3}); setDay({},true);
+      }
+      render(); return;
+    }
+    if(a==="sy-save" || a==="sy-test" || a==="sy-now"){
+      var u=document.getElementById("sy-url"), tk=document.getElementById("sy-token");
+      if(u) SYNC.url=u.value.trim();
+      if(tk) SYNC.token=tk.value.trim();
+      saveSync();
+      SYNC.lastError=""; SYNC.pingResult="";
+      if(a==="sy-test") syncPing();
+      else if(a==="sy-now") syncNow();
+      else { SYNC.pingResult="Saved."; renderSyncStatus(); }
+      return;
+    }
+    if(a==="diag"){
+      var o=document.getElementById("diagout");
+      if(o){ o.textContent=runDiag(); o.style.display="block"; }
+      return;
+    }
+    if(a==="export"){ doExport(); return; }
+    if(a==="import"){ document.getElementById("impfile").click(); return; }
+  }
+
+  var ft=t.closest("[data-ftag]");
+  if(ft){
+    readFoodDraft();
+    var tg=ft.getAttribute("data-ftag"), cur=draft.tags||[];
+    draft.tags = cur.indexOf(tg)>=0 ? cur.filter(function(x){return x!==tg;}) : cur.concat([tg]);
+    render(); return;
+  }
+
+  var sy=t.closest("[data-sym]");
+  if(sy){
+    var nm=sy.getAttribute("data-sym");
+    var ex=day.symptoms.filter(function(s){return s.name===nm;}).length>0;
+    day.symptoms = ex ? day.symptoms.filter(function(s){return s.name!==nm;})
+                      : day.symptoms.concat([{name:nm,severity:3}]);
+    setDay({},true); render(); return;
+  }
+  var sd=t.closest("[data-symdel]");
+  if(sd){ var dn=sd.getAttribute("data-symdel");
+    day.symptoms=day.symptoms.filter(function(s){return s.name!==dn;});
+    setDay({},true); render(); return; }
+
+  var del=t.closest("[data-del]");
+  if(del){
+    var kind=del.getAttribute("data-del"), id=del.getAttribute("data-id");
+    day[kind]=day[kind].filter(function(x){return x.id!==id;});
+    setDay({},true); render(); return;
+  }
+
+  var go=t.closest("[data-goto]");
+  if(go){ date=go.getAttribute("data-goto"); tab="log"; openForm=null; draft={}; render(); return; }
+});
+
+document.getElementById("view").addEventListener("input",function(e){
+  var el=e.target;
+  var fld=el.getAttribute&&el.getAttribute("data-fld");
+  if(fld){
+    var patch={}; patch[fld]=el.value; setDay(patch);
+    if(el.getAttribute("data-range")){
+      var lab=document.querySelector('[data-lab="'+fld+'"]');
+      if(lab) lab.textContent=el.value;
+    }
+    return;
+  }
+  var sev=el.getAttribute&&el.getAttribute("data-sev");
+  if(sev){
+    day.symptoms=day.symptoms.map(function(s){
+      return s.name===sev?{name:s.name,severity:+el.value}:s; });
+    setDay({});
+    var vs=el.parentNode.querySelector(".v"); if(vs) vs.textContent=el.value;
+    return;
+  }
+  if(el.id==="b-urg"){
+    var ul=document.getElementById("b-ulab"); if(ul) ul.textContent=el.value;
+    draft.urgency=el.value; return;
+  }
+});
+
+document.getElementById("view").addEventListener("change",function(e){
+  if(e.target.id==="b-went"){ readBathDraft(); render(); }
+  if(e.target.id==="impfile"){ doImport(e.target.files[0]); }
+});
+
+document.getElementById("banner").addEventListener("click",function(e){
+  var b=e.target.closest('[data-act="export"]');
+  if(b) doExport();
+});
+
+/* ---------- backup ---------- */
+function doExport(){
+  var payload={app:"daily-log",version:1,exportedAt:new Date().toISOString(),days:DB};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url; a.download="daily-log-backup-"+today()+".json";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+  META.lastExport=new Date().toISOString(); META.changes=0; saveMeta();
+  renderBanner();
+  var m=document.getElementById("bmsg");
+  if(m) m.textContent="Backup downloaded. Move it to Google Drive or another cloud folder — "
+    + "that copy survives anything that happens to this browser.";
+}
+function doImport(file){
+  if(!file) return;
+  var r=new FileReader();
+  r.onload=function(){
+    var m=document.getElementById("bmsg");
+    try{
+      var p=JSON.parse(r.result);
+      var days=p.days||p;
+      var count=0;
+      for(var k in days){ if(/^\d{4}-\d{2}-\d{2}$/.test(k)){ DB[k]=days[k]; count++; } }
+      saveDB();
+      if(m) m.textContent="Restored "+count+" day"+(count===1?"":"s")+".";
+      render();
+    }catch(err){
+      if(m) m.textContent="Couldn't read that file — make sure it's a backup exported from this app.";
+    }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- boot ---------- */
+loadDB();
+checkStorage();
+loadMeta();
+loadSync();
+markers();
+requestPersist();
+render();
+if(syncConfigured()) syncNow();
+</script>
+</body>
+</html>
